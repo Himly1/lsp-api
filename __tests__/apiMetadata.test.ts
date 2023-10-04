@@ -1,5 +1,4 @@
 import {loadApiMetaDataFromTheSourceCode} from "../src/apiMetadata";
-import * as fs from 'fs'
 
 describe("loadApiMetaDataFromTheSourceCode tests", () => {
     it('should return empty array when there is no api definition', () => {

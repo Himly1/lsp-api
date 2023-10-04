@@ -34,7 +34,6 @@ export function loadApiMetaDataFromTheSourceCode(sourceCode: string): APIMetaDat
         //to match strings like this: (anything)
         const lspDef = def.match("\\(.*\\)");
         if (lspDef == null) {
-            console.error(`Unable to extract the lsp api definition from: ${def}`)
             throw "Unable to extract the lsp api definition."
         }
         //to match strings like this: req: {anything}
