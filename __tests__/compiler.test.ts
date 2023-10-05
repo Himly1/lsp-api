@@ -1,4 +1,4 @@
-import {CompilationInfo, compile, compileAll} from "../src";
+import {compile, compileAll} from '../src/compiler';
 
 describe("Compile tests", () => {
     it('should return error when the keyword is not defined.', () => {
@@ -118,7 +118,16 @@ describe("Compile tests on Local/set-in", () => {
 describe("CompileAll Tests", () => {
     it('should throw exception when the data access layer not exists', () => {
         expect(() => {
-            compileAll()
+            compileAll((url, method, requestBody): object => {
+                return {}
+            }, {
+                store(key: string, data: object) {
+                    return undefined;
+                },
+                retrieve(key: string): object {
+                    return {}
+                }
+            })
         }).toThrow("ERROR: Add data access layer to your project root folder before compiling. More information: xxx");
     });
 })
