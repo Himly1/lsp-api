@@ -70,7 +70,6 @@ const syntaxValidators: {
             keywords.add(match[1]);
         }
 
-        console.log(`keywords? ${Array.from(keywords)} urlFormatting? ${JSON.stringify(facts.urlFormattingMappings)}`)
         for (const keyword of keywords) {
             const mapping = facts.urlFormattingMappings?.[keyword];
             if (mapping == null) {
@@ -89,7 +88,6 @@ const syntaxValidators: {
         return undefined;
     },
     "type/map": (syntax, args, facts): string | undefined => {
-        console.log(`syntax? ${syntax}`)
         if (syntax == null || !/^\{\s*(:\w+\s+\w+\s*)*\}$/.test(syntax)) {
             return "The syntax should be a map in clojure way."
         }
@@ -105,7 +103,6 @@ const syntaxValidators: {
         return undefined
     },
     "one-of": (syntax, args, facts): string | undefined => {
-        console.log(`args? ${args}`)
         for (const option of args) {
             const error = syntaxValidators[option](syntax, [], facts)
             if (error == undefined) {
@@ -180,6 +177,8 @@ export function compile(sourceCode: string): CompilationInfo[] {
                 break;
             }
         }
+
+        console.log(`lsp: ${metadata.lspDef} requestData: ${metadata.args} compiled successfully`)
         compilations.push({
             lsp: metadata.lspDef,
             args: metadata.args,
@@ -220,7 +219,7 @@ export function compileAll() {
         })[0];
 
         if (error) {
-            throw `ERROR: ${JSON.stringify(compilations)}`
+            throw `ERROR: ${JSON.stringify(error)}`
         }
     })
 }
