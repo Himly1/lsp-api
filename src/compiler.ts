@@ -234,6 +234,10 @@ export function compileAll(restReqSender: RestRequestSender, storageManager: Loc
         compilations.forEach(compilation => {
             lspMetadata[compilation.lsp] = compilation.args;
         })
+
+        if (compilations.length === 0) {
+            console.warn(`No api definition found at the file: ${file}`)
+        }
     })
 }
 
