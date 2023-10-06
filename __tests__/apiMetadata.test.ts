@@ -38,7 +38,6 @@ export function compile() {
     }
 }`
         const apiMetadataArr = loadApiMetaDataFromTheSourceCode(sourCode);
-        console.log(`apiMetadataArr? ${JSON.stringify(apiMetadataArr)}`)
         expect(apiMetadataArr.length).toEqual(2);
         expect(apiMetadataArr[0]).toEqual({"lspDef": "(Rest/get /system/roles {} (Get system roles))", "args": ["filters", "age"]})
         expect(apiMetadataArr[1]).toEqual({"lspDef": "(Rest/post /users/:id/posts {:id userId} asBody (Add post of the user))", "args": ["userId", "title", "content"]})

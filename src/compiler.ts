@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import * as path from "path";
 import {loadApiMetaDataFromTheSourceCode} from './apiMetadata'
-import {setup} from "./eval";
+import {LocalStorageManager, RestRequestSender, setup} from "./eval";
 
 const keywords: { [key: string]: string[] } = {
     "Rest/get": ["(type/url)", "(one-of type/map fn/selfMappings)"],
@@ -145,49 +145,50 @@ export function lspToArray(lsp: string): string[] {
     });
 }
 
+function compileLsp(lsp: string, facts: ValidationFactContext): CompilationInfo {
+    const [keyword, ...args] = lspToArray(lsp)
+    const syntaxTemplate = keywords[keyword];
+    if (syntaxTemplate == undefined) {
+        return {
+            lsp: lsp,
+            args: facts.reqDataKeys,
+            error: "Invalid keyword."
+        }
+    }
+
+    for (let i = syntaxTemplate.length - 1; i > -1; --i) {
+        const syntax = args.length > i ? args[i] : null;
+        const template = syntaxTemplate[i];
+        const [keywordOfTheTemplate, ...argsOfTheTemplate] = lspToArray(template);
+
+        const validator = syntaxValidators[keywordOfTheTemplate];
+        const error = validator(syntax, argsOfTheTemplate, facts);
+        if (error) {
+            return {
+                lsp: lsp,
+                args: facts.reqDataKeys,
+                error: `Error on the ${i + 1}st argument: ${error}`
+            }
+        }
+    }
+
+    return {
+        lsp: lsp,
+        args: facts.reqDataKeys,
+        error: undefined
+    }
+}
+
 export function compile(sourceCode: string): CompilationInfo[] {
     const metaDataArr = loadApiMetaDataFromTheSourceCode(sourceCode);
     const compilations: CompilationInfo[] = [];
     for (const metadata of metaDataArr) {
-        const [keyword, ...args] = lspToArray(metadata.lspDef)
-        const syntaxTemplate = keywords[keyword];
-        if (syntaxTemplate == undefined) {
-            compilations.push({
-                lsp: metadata.lspDef,
-                args: metadata.args,
-                error: "Invalid keyword."
-            })
+        const compilation = compileLsp(metadata.lspDef, new ValidationFactContext(metadata.args))
+        compilations.push(compilation)
+        if (compilation.error) {
             break;
         }
-
-        const facts = new ValidationFactContext(metadata.args)
-        for (let i = syntaxTemplate.length - 1; i > -1; --i) {
-            const syntax = args.length > i ? args[i] : null;
-            const template = syntaxTemplate[i];
-            const [keywordOfTheTemplate, ...argsOfTheTemplate] = lspToArray(template);
-
-
-            const validator = syntaxValidators[keywordOfTheTemplate];
-            const error = validator(syntax, argsOfTheTemplate, facts);
-            if (error) {
-                compilations.push({
-                    lsp: metadata.lspDef,
-                    args: metadata.args,
-                    error: `Error on the ${i + 1}st argument: ${error}`
-                })
-                break;
-            }
-        }
-
-        console.log(`lsp: ${metadata.lspDef} requestData: ${metadata.args} compiled successfully`)
-        compilations.push({
-            lsp: metadata.lspDef,
-            args: metadata.args,
-            error: undefined
-        })
     }
-
-
     return compilations;
 }
 
@@ -205,13 +206,9 @@ function getTsFiles(dir: string, fileList: string[] = []): string[] {
     return fileList;
 }
 
-type HttpMethod = "post" | "get" | "delete" | "patch" | "put";
-type RestRequestSender = (url: string, method: HttpMethod, requestBody: object) => object;
-type LocalStorageManager = {
-    store(key: string, data: object): void,
-    retrieve(key: string): object
-}
+const lspMetadata: {[key: string]:string[]} = {
 
+}
 export function compileAll(restReqSender: RestRequestSender, storageManager: LocalStorageManager) {
     setup(restReqSender, storageManager)
 
@@ -231,5 +228,23 @@ export function compileAll(restReqSender: RestRequestSender, storageManager: Loc
         if (error) {
             throw `ERROR: ${JSON.stringify(error)}`
         }
+
+        compilations.forEach(compilation => {
+            lspMetadata[compilation.lsp] = compilation.args;
+        })
     })
+}
+
+export function getFacts(lsp: string) {
+   const args = lspMetadata[lsp];
+   if (args == null) {
+       throw "No compilation found for the lsp. Should call compileAll before call getFacts. Did you forget to add the compileAll to your entrypoint?"
+   }
+   const facts = new ValidationFactContext(args);
+   const compilation = compileLsp(lsp, facts);
+   if (compilation.error) {
+       throw `ERROR when compiling the lsp: ${JSON.stringify(compilation)}`
+   }
+
+   return facts;
 }
