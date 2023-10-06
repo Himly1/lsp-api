@@ -140,12 +140,12 @@ When you get fucked by the selftalking api definitions.
 ```
 
 # How to use lsp-api
-1.Install the lsp-api
+## 1.Install the lsp-api
 ```
 npm install lsp-api
 ```
 
-2.add the template to your project folder 'data/api/index.ts
+## 2.add the template to your project folder 'data/api/index.ts
 ```
 import {evalApi} from 'lsp-api'
 
@@ -252,7 +252,7 @@ export async function api<T extends keyof FlattedApis>(api: T, req: RequestTypeO
 }
 ```
 
-3.import the necessary functions and types from lsp-api to your entrypoint file
+## 3.import the necessary functions and types from lsp-api to your entrypoint file
 ```
 import {compileAll, evalApi, RestRequestSender, LocalStorageManager} from 'lsp-api'
 
@@ -270,14 +270,14 @@ const localStorageManager: LocalStorageManager = {
 
 compileAll(restRequestSender,localStorageManager)
 ```
-4.add More apis to the type `API` in the data/api/index.ts file
+## 4.add More apis to the type `API` in the data/api/index.ts file
 ```
 //Add more APIS here with the syntax: API<SystemAPI & xxxAPISet & AnotherAPISet>
 export type Apis = API<UserPosts | anotherApis | xxxAPIS>
 ```
 
 
-5.write api definition based on the examples
+## 5.write api definition based on the examples
 ```
 import {evalApi} from 'lsp-api'
 
