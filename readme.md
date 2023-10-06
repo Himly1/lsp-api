@@ -279,8 +279,6 @@ export type Apis = API<UserPosts | anotherApis | xxxAPIS>
 
 ## 5.write api definition based on the examples
 ```
-import {evalApi} from 'lsp-api'
-
 type GeneralResponse<T> = {
     success: boolean,
     message: string
@@ -350,36 +348,5 @@ export type Examples = {
         },
         res: {}
     }
-}
-
-export type API<T extends {
-    [K in string]: {
-        req: {
-            [key: string]: any
-        },
-        res: {
-            [key: string]: any
-        }
-    }
-}> = {
-    [K in keyof T]: {
-        req: { [key: string]: any },
-        res: { [key: string]: any }
-    }
-}
-
-//Add more APIS here with the syntax: API<Examples & xxxAPISet & AnotherAPISet>
-export type Apis = API<Examples>
-export type FlattedApis = {
-    [K in keyof Apis]: {
-        apiDef: K,
-        reqDef: Apis[K]
-    }
-}
-type RequestTypeOfTheApiGeneric<T extends keyof FlattedApis> = FlattedApis[T]['reqDef']['req']
-type ResponseTypeOfTheApiGeneric<T extends keyof FlattedApis> = FlattedApis[T]['reqDef']['res']
-
-export async function api<T extends keyof FlattedApis>(api: T, req: RequestTypeOfTheApiGeneric<T>): Promise<T> {
-    return evalApi(api, req);
 }
 ```
