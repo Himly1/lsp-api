@@ -188,6 +188,8 @@ export function compile(sourceCode: string): CompilationInfo[] {
         if (compilation.error) {
             break;
         }
+
+        console.log(`${metadata.lspDef} compiled successfully`)
     }
     return compilations;
 }
