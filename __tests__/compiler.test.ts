@@ -150,8 +150,8 @@ describe("CompileAll Tests", () => {
 
     it('should throw exception when the data access layer not exists', () => {
         expect(() => {
-            compileAll(httpRequestSender, localStorageManager)
-        }).toThrow("ERROR: Add data access layer to your project root folder before compiling. More information: xxx");
+            compileAll("data/api")
+        }).toThrow("ERROR: The api folder not exists: data/api");
     });
     afterAll(() => {
         const dirPath = path.join(__dirname, '../data/api');
@@ -243,13 +243,13 @@ export type Users = {
 describe("getFacts tests", () => {
     it('should throw exception when compileAll did not been called.', () => {
         expect(() => {
-            getFacts("(Rest/get /users/:id/posts?:deleted selfMappings)")
+            getFacts("(Rest/get /users/:id/posts?:deleted selfMappings)", {})
         }).toThrow("No compilation found for the lsp. Should call compileAll before call getFacts. Did you forget to add the compileAll to your entrypoint?")
     });
 
     it('should return the correct facts', () => {
-        compileAll(httpRequestSender, localStorageManager)
-        const facts = getFacts("(Rest/get /users/:id/posts?:deleted&:dateGreaterThan selfMappings)")
+        compileAll("data/api")
+        const facts = getFacts("(Rest/get /users/:id/posts?:deleted&:dateGreaterThan selfMappings)", {"(Rest/get /users/:id/posts?:deleted&:dateGreaterThan selfMappings)":["id","deleted","dateGreaterThan"],"(Rest/post /users/:id/posts selfMappings asBody (Add post of the user))":["id","title","content"],"(Rest/delete /users/:id/posts/:postId selfMappings asBody (Delete the post of the user))":["id","postId"],"(Rest/put /users/:id/posts/:postId selfMappings asBody (update the post)":["id","postId","title","content"],"(Rest/patch /users/:id/posts/:postId?:titleOnly selfMappings asBody (patching the post)":["id","postId","titleOnly","title","content"],"(Local/get-in user-profile (get the profile of the user))":[],"(Local/set-in user-profile (set the profile of the user))":[]})
         expect(facts).toEqual({
             urlFormattingMappings: {
                 "id": "id",

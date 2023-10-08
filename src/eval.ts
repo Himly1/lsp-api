@@ -9,6 +9,7 @@ export type LocalStorageManager = {
 
 let restRequestSender: RestRequestSender | undefined = undefined;
 let localStorageManager: LocalStorageManager | undefined = undefined;
+let metadata: {[key: string]: string[]} | undefined = undefined;
 
 class RestRequest {
     public method: HttpMethod;
@@ -117,11 +118,11 @@ const keywordResolvers: { [key: string]: SyntaxResolver } = {
 
 
 export function evalApi<T>(lsp: string, reqData: { [key: string]: any }): T {
-    if (localStorageManager == null || restRequestSender == null) {
-        throw "Did you forget to setup the LocalStorageManager and RestRequestSender? If so, Add the compileAll to your entrypoint."
+    if (localStorageManager == null || restRequestSender == null || metadata == null) {
+        throw "Did you forget to setup the LocalStorageManager and RestRequestSender and lspMetadata? If so, Add the compileAll to your entrypoint."
     }
     const [keyword, ...args] = lspToArray(lsp)
-    const facts = getFacts(lsp);
+    const facts = getFacts(lsp, metadata);
     const resolver = keywordResolvers[keyword];
     const dataAccessReq = resolver(args, reqData, facts.urlFormattingMappings, facts.bodyMappings)
     if (dataAccessReq instanceof RestRequest) {
@@ -138,7 +139,8 @@ export function evalApi<T>(lsp: string, reqData: { [key: string]: any }): T {
     }
 }
 
-export function setup(httpRequestSender: RestRequestSender, storageManager: LocalStorageManager) {
+export function setup(httpRequestSender: RestRequestSender, storageManager: LocalStorageManager, lspMetadata: {[key:string]:string[]}) {
     restRequestSender = httpRequestSender;
     localStorageManager = storageManager;
+    metadata = lspMetadata;
 }

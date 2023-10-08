@@ -211,15 +211,12 @@ function getTsFiles(dir: string, fileList: string[] = []): string[] {
 const lspMetadata: {[key: string]:string[]} = {
 
 }
-export function compileAll(restReqSender: RestRequestSender, storageManager: LocalStorageManager) {
-    setup(restReqSender, storageManager)
-
-    const apiPath = process.cwd() + "/data/api";
-    const exists = fs.existsSync(apiPath);
+export function compileAll(pathOfApiFolder: string) {
+    const exists = fs.existsSync(pathOfApiFolder);
     if (!exists) {
-        throw "ERROR: Add data access layer to your project root folder before compiling. More information: xxx";
+        throw `ERROR: The api folder not exists: ${pathOfApiFolder}`;
     }
-    const tsFilesPath = getTsFiles(apiPath, []);
+    const tsFilesPath = getTsFiles(pathOfApiFolder, []);
     tsFilesPath.forEach(file => {
         const sourceCode = fs.readFileSync(file, 'utf-8')
         const compilations = compile(sourceCode)
@@ -239,10 +236,12 @@ export function compileAll(restReqSender: RestRequestSender, storageManager: Loc
             console.warn(`No api definition found at the file: ${file}`)
         }
     })
+
+    fs.writeFileSync(`${pathOfApiFolder}/apiMetadata.json`, JSON.stringify(lspMetadata), 'utf-8')
 }
 
-export function getFacts(lsp: string) {
-   const args = lspMetadata[lsp];
+export function getFacts(lsp: string, metadata: {[key:string]: string[]}) {
+   const args = metadata[lsp];
    if (args == null) {
        throw "No compilation found for the lsp. Should call compileAll before call getFacts. Did you forget to add the compileAll to your entrypoint?"
    }
