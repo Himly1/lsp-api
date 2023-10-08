@@ -254,8 +254,26 @@ export async function api<T extends keyof FlattedApis>(api: T, req: RequestTypeO
 
 ## 3.Add compileLsp.js to your project root folder with below content
 ```
-const compiler = require('lsp-api')
-compiler.compileAll(process.cwd() + "/data/api")
+const fs = require("fs")
+const lspApi = require('lsp-api')
+
+lspApi.compileAll(process.cwd() + "/data/api", {
+    statSync(path) {
+        return fs.statSync(path);
+    },
+    readFileSync(file, encoding) {
+        return fs.readFileSync(file, 'utf-8')
+    },
+    readdirSync(dir) {
+        return fs.readdirSync(dir)
+    },
+    writeFileSync(file, content, encoding) {
+        fs.writeFileSync(file, content, 'utf-8')
+    },
+    existsSync(path) {
+        return fs.existsSync(path)
+    }
+})
 ```
 
 ## 4.Add the npm task `compileLsp`
