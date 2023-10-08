@@ -29,7 +29,20 @@ describe("evalApi tests", () => {
     it('should return correct results on http get request', () => {
         let finalUrl = undefined;
         let requestBody = undefined;
-        compileAll("data/api")
+        compileAll("data/api", {
+            existsSync(path: string): boolean {
+                return fs.existsSync(path);
+            }, readFileSync(file: string, encoding: string): string {
+                return fs.readFileSync(file, "utf-8")
+            }, readdirSync(dir: string): string[] {
+                return fs.readdirSync(dir);
+            }, writeFileSync(file: string, content: string, encoding: string): void {
+                fs.writeFileSync(file, content, encoding as any)
+            },
+            statSync(path: string): { isDirectory(): boolean } {
+                return fs.statSync(path);
+            }
+        })
         setup((url, method, body) => {
             finalUrl = url;
             requestBody = body;
@@ -56,7 +69,20 @@ describe("evalApi tests", () => {
     it('should return correct results on http post request', () => {
         let finalUrl = undefined;
         let requestBody = undefined;
-        compileAll("data/api")
+        compileAll("data/api", {
+            existsSync(path: string): boolean {
+                return fs.existsSync(path);
+            }, readFileSync(file: string, encoding: string): string {
+                return fs.readFileSync(file, "utf-8")
+            }, readdirSync(dir: string): string[] {
+                return fs.readdirSync(dir);
+            }, writeFileSync(file: string, content: string, encoding: string): void {
+                fs.writeFileSync(file, content, encoding as any)
+            },
+            statSync(path: string): { isDirectory(): boolean } {
+                return fs.statSync(path);
+            }
+        })
         setup((url, method, body) => {
             finalUrl = url;
             requestBody = body;
@@ -81,7 +107,20 @@ describe("evalApi tests", () => {
     it('should return correct results on http delete request', () => {
         let finalUrl = undefined;
         let requestBody = undefined;
-        compileAll("data/api")
+        compileAll("data/api", {
+            existsSync(path: string): boolean {
+                return fs.existsSync(path);
+            }, readFileSync(file: string, encoding: string): string {
+                return fs.readFileSync(file, "utf-8")
+            }, readdirSync(dir: string): string[] {
+                return fs.readdirSync(dir);
+            }, writeFileSync(file: string, content: string, encoding: string): void {
+                fs.writeFileSync(file, content, encoding as any)
+            },
+            statSync(path: string): { isDirectory(): boolean } {
+                return fs.statSync(path);
+            }
+        })
         setup((url, method, body) => {
             finalUrl = url;
             requestBody = body;
@@ -107,7 +146,20 @@ describe("evalApi tests", () => {
     it('should return correct results on http put request', () => {
         let finalUrl = undefined;
         let requestBody = undefined;
-        compileAll("data/api")
+        compileAll("data/api", {
+            existsSync(path: string): boolean {
+                return fs.existsSync(path);
+            }, readFileSync(file: string, encoding: string): string {
+                return fs.readFileSync(file, "utf-8")
+            }, readdirSync(dir: string): string[] {
+                return fs.readdirSync(dir);
+            }, writeFileSync(file: string, content: string, encoding: string): void {
+                fs.writeFileSync(file, content, encoding as any)
+            },
+            statSync(path: string): { isDirectory(): boolean } {
+                return fs.statSync(path);
+            }
+        })
         setup((url, method, body) => {
             finalUrl = url;
             requestBody = body;
@@ -133,7 +185,20 @@ describe("evalApi tests", () => {
     it('should return correct results on http patch request', () => {
         let finalUrl = undefined;
         let requestBody = undefined;
-        compileAll("data/api")
+        compileAll("data/api", {
+            existsSync(path: string): boolean {
+                return fs.existsSync(path);
+            }, readFileSync(file: string, encoding: string): string {
+                return fs.readFileSync(file, "utf-8")
+            }, readdirSync(dir: string): string[] {
+                return fs.readdirSync(dir);
+            }, writeFileSync(file: string, content: string, encoding: string): void {
+                fs.writeFileSync(file, content, encoding as any)
+            },
+            statSync(path: string): { isDirectory(): boolean } {
+                return fs.statSync(path);
+            }
+        })
         setup((url, method, body) => {
             finalUrl = url;
             requestBody = body;
@@ -164,7 +229,20 @@ describe("evalApi tests", () => {
     it('should return correct results on local storage set-in', () => {
         let receivedKey = undefined;
         let receivedData = undefined;
-        compileAll("data/api")
+        compileAll("data/api", {
+            existsSync(path: string): boolean {
+                return fs.existsSync(path);
+            }, readFileSync(file: string, encoding: string): string {
+                return fs.readFileSync(file, "utf-8")
+            }, readdirSync(dir: string): string[] {
+                return fs.readdirSync(dir);
+            }, writeFileSync(file: string, content: string, encoding: string): void {
+                fs.writeFileSync(file, content, encoding as any)
+            },
+            statSync(path: string): { isDirectory(): boolean } {
+                return fs.statSync(path);
+            }
+        })
         setup((url, method, body) => {
             return {
                 id: 445,
@@ -191,7 +269,20 @@ describe("evalApi tests", () => {
     it('should return correct results on local storage get-in', () => {
         let receivedKey = undefined;
         let receivedData = undefined;
-        compileAll("data/api")
+        compileAll("data/api", {
+            existsSync(path: string): boolean {
+                return fs.existsSync(path);
+            }, readFileSync(file: string, encoding: string): string {
+                return fs.readFileSync(file, "utf-8")
+            }, readdirSync(dir: string): string[] {
+                return fs.readdirSync(dir);
+            }, writeFileSync(file: string, content: string, encoding: string): void {
+                fs.writeFileSync(file, content, encoding as any)
+            },
+            statSync(path: string): { isDirectory(): boolean } {
+                return fs.statSync(path);
+            }
+        })
         setup((url, method, body) => {
             return {
                 id: 445,

@@ -1,7 +1,7 @@
 import {compile, compileAll, getFacts} from '../src/compiler';
 import {LocalStorageManager, RestRequestSender} from "../src/eval";
-import * as fs from 'fs'
 import * as path from "path";
+import * as fs from "fs";
 
 describe("Compile tests", () => {
     it('should return error when the keyword is not defined.', () => {
@@ -150,7 +150,20 @@ describe("CompileAll Tests", () => {
 
     it('should throw exception when the data access layer not exists', () => {
         expect(() => {
-            compileAll("data/api")
+            compileAll("data/api", {
+                existsSync(path: string): boolean {
+                    return fs.existsSync(path);
+                }, readFileSync(file: string, encoding: string): string {
+                    return fs.readFileSync(file, "utf-8")
+                }, readdirSync(dir: string): string[] {
+                    return fs.readdirSync(dir);
+                }, writeFileSync(file: string, content: string, encoding: string): void {
+                    fs.writeFileSync(file, content, encoding as any)
+                },
+                statSync(path: string): { isDirectory(): boolean } {
+                    return fs.statSync(path);
+                }
+            })
         }).toThrow("ERROR: The api folder not exists: data/api");
     });
     afterAll(() => {
@@ -248,7 +261,20 @@ describe("getFacts tests", () => {
     });
 
     it('should return the correct facts', () => {
-        compileAll("data/api")
+        compileAll("data/api", {
+            existsSync(path: string): boolean {
+                return fs.existsSync(path);
+            }, readFileSync(file: string, encoding: string): string {
+                return fs.readFileSync(file, "utf-8")
+            }, readdirSync(dir: string): string[] {
+                return fs.readdirSync(dir);
+            }, writeFileSync(file: string, content: string, encoding: string): void {
+                fs.writeFileSync(file, content, encoding as any)
+            },
+            statSync(path: string): { isDirectory(): boolean } {
+                return fs.statSync(path);
+            }
+        })
         const facts = getFacts("(Rest/get /users/:id/posts?:deleted&:dateGreaterThan selfMappings)", {"(Rest/get /users/:id/posts?:deleted&:dateGreaterThan selfMappings)":["id","deleted","dateGreaterThan"],"(Rest/post /users/:id/posts selfMappings asBody (Add post of the user))":["id","title","content"],"(Rest/delete /users/:id/posts/:postId selfMappings asBody (Delete the post of the user))":["id","postId"],"(Rest/put /users/:id/posts/:postId selfMappings asBody (update the post)":["id","postId","title","content"],"(Rest/patch /users/:id/posts/:postId?:titleOnly selfMappings asBody (patching the post)":["id","postId","titleOnly","title","content"],"(Local/get-in user-profile (get the profile of the user))":[],"(Local/set-in user-profile (set the profile of the user))":[]})
         expect(facts).toEqual({
             urlFormattingMappings: {

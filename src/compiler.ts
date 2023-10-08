@@ -1,7 +1,4 @@
-import * as fs from 'fs'
-import * as path from "path";
 import {loadApiMetaDataFromTheSourceCode} from './apiMetadata'
-import {LocalStorageManager, RestRequestSender, setup} from "./eval";
 
 const keywords: { [key: string]: string[] } = {
     "Rest/get": ["(type/url)", "(one-of type/map fn/selfMappings)"],
@@ -29,27 +26,25 @@ class ValidationFactContext {
     }
 }
 
-function checkIfTheSyntaxAValidUrl(syntax: string):boolean {
-   if (syntax == null || !syntax.startsWith("/")) {
-       return false;
-   }
+function checkIfTheSyntaxAValidUrl(syntax: string): boolean {
+    if (syntax == null || !syntax.startsWith("/")) {
+        return false;
+    }
 
-   const queryParameter = syntax.split("?")[1];
-   if (queryParameter == undefined) {
-       return true;
-   }
+    const queryParameter = syntax.split("?")[1];
+    if (queryParameter == undefined) {
+        return true;
+    }
 
-   const args = queryParameter.split("&");
-   for (const arg of args) {
-       if (!arg.startsWith(":")) {
-           return false;
-       }
-   }
-
-
+    const args = queryParameter.split("&");
+    for (const arg of args) {
+        if (!arg.startsWith(":")) {
+            return false;
+        }
+    }
 
 
-   return true;
+    return true;
 }
 
 const syntaxValidators: {
@@ -121,7 +116,7 @@ const syntaxValidators: {
         facts.urlFormattingMappings = facts.reqDataKeys.reduce((rs, key) => {
             rs[key] = key;
             return rs;
-        }, {} as {[key: string]: string})
+        }, {} as { [key: string]: string })
 
         return undefined;
     },
@@ -133,7 +128,7 @@ const syntaxValidators: {
         facts.bodyMappings = facts.reqDataKeys.reduce((rs, key) => {
             rs[key] = key;
             return rs;
-        }, {} as {[key: string]: string})
+        }, {} as { [key: string]: string })
         return undefined;
     }
 }
@@ -194,29 +189,38 @@ export function compile(sourceCode: string): CompilationInfo[] {
     return compilations;
 }
 
-function getTsFiles(dir: string, fileList: string[] = []): string[] {
+type Fs = {
+    statSync(path: string): {
+        isDirectory(): boolean
+    },
+    readdirSync(dir: string): string[],
+    readFileSync(file:string, encoding: string):string,
+    writeFileSync(file:string, content:string, encoding: string):void
+    existsSync(path:string):boolean
+}
+
+function getTsFiles(dir: string, fileList: string[] = [], fs:Fs): string[] {
     const files = fs.readdirSync(dir);
 
     files.forEach((file) => {
-        if (fs.statSync(path.join(dir, file)).isDirectory()) {
-            fileList = getTsFiles(path.join(dir, file), fileList);
-        } else if (path.extname(file) === '.ts') {
-            fileList.push(path.join(dir, file));
+        if (fs.statSync(`${dir}/${file}`).isDirectory()) {
+            fileList = getTsFiles(`${dir}/${file}`, fileList,fs);
+        } else if (file.split(".")[1] === 'ts') {
+            fileList.push(`${dir}/${file}`);
         }
     });
 
     return fileList;
 }
 
-const lspMetadata: {[key: string]:string[]} = {
+const lspMetadata: { [key: string]: string[] } = {}
 
-}
-export function compileAll(pathOfApiFolder: string) {
+export function compileAll(pathOfApiFolder: string, fs:Fs) {
     const exists = fs.existsSync(pathOfApiFolder);
     if (!exists) {
         throw `ERROR: The api folder not exists: ${pathOfApiFolder}`;
     }
-    const tsFilesPath = getTsFiles(pathOfApiFolder, []);
+    const tsFilesPath = getTsFiles(pathOfApiFolder, [], fs);
     tsFilesPath.forEach(file => {
         const sourceCode = fs.readFileSync(file, 'utf-8')
         const compilations = compile(sourceCode)
@@ -240,16 +244,16 @@ export function compileAll(pathOfApiFolder: string) {
     fs.writeFileSync(`${pathOfApiFolder}/apiMetadata.json`, JSON.stringify(lspMetadata), 'utf-8')
 }
 
-export function getFacts(lsp: string, metadata: {[key:string]: string[]}) {
-   const args = metadata[lsp];
-   if (args == null) {
-       throw "No compilation found for the lsp. Should call compileAll before call getFacts. Did you forget to add the compileAll to your entrypoint?"
-   }
-   const facts = new ValidationFactContext(args);
-   const compilation = compileLsp(lsp, facts);
-   if (compilation.error) {
-       throw `ERROR when compiling the lsp: ${JSON.stringify(compilation)}`
-   }
+export function getFacts(lsp: string, metadata: { [key: string]: string[] }) {
+    const args = metadata[lsp];
+    if (args == null) {
+        throw "No compilation found for the lsp. Should call compileAll before call getFacts. Did you forget to add the compileAll to your entrypoint?"
+    }
+    const facts = new ValidationFactContext(args);
+    const compilation = compileLsp(lsp, facts);
+    if (compilation.error) {
+        throw `ERROR when compiling the lsp: ${JSON.stringify(compilation)}`
+    }
 
-   return facts;
+    return facts;
 }
