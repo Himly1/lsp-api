@@ -145,7 +145,7 @@ When you get fucked by the selftalking api definitions.
 npm install lsp-api
 ```
 
-## 2.add the template to your project folder 'data/api/index.ts
+## 2.Add the template to your project folder 'data/api/index.ts
 ```
 import {evalApi} from 'lsp-api'
 
@@ -287,14 +287,14 @@ setup((url, method, requestBody) => {
 }, metadata)
 ```
 
-## 7.add More apis to the type `API` in the data/api/index.ts file
+## 7.Add More apis to the type `API` in the data/api/index.ts file
 ```
 //Add more APIS here with the syntax: API<SystemAPI & xxxAPISet & AnotherAPISet>
 export type Apis = API<UserPosts | anotherApis | xxxAPIS>
 ```
 
 
-## 8.write api definition based on the examples
+## 8.Write api definition based on the examples
 ```
 type GeneralResponse<T> = {
     success: boolean,
