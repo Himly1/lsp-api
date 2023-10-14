@@ -1,6 +1,6 @@
 {
   "name": "lsp-api",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "A Lisp way to define data access API to make it simple and easy to use",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
