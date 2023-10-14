@@ -29,7 +29,7 @@ describe("evalApi tests", () => {
     it('should return correct results on http get request', () => {
         let finalUrl = undefined;
         let requestBody = undefined;
-        compileAll("data/api", {
+        compileAll("data/api", "data/api/apiMetadata.json",{
             existsSync(path: string): boolean {
                 return fs.existsSync(path);
             }, readFileSync(file: string, encoding: string): string {
@@ -69,7 +69,7 @@ describe("evalApi tests", () => {
     it('should return correct results on http post request', () => {
         let finalUrl = undefined;
         let requestBody = undefined;
-        compileAll("data/api", {
+        compileAll("data/api", "data/api/apiMetadata.json",{
             existsSync(path: string): boolean {
                 return fs.existsSync(path);
             }, readFileSync(file: string, encoding: string): string {
@@ -107,7 +107,7 @@ describe("evalApi tests", () => {
     it('should return correct results on http delete request', () => {
         let finalUrl = undefined;
         let requestBody = undefined;
-        compileAll("data/api", {
+        compileAll("data/api", "data/api/apiMetadata.json",{
             existsSync(path: string): boolean {
                 return fs.existsSync(path);
             }, readFileSync(file: string, encoding: string): string {
@@ -146,7 +146,7 @@ describe("evalApi tests", () => {
     it('should return correct results on http put request', () => {
         let finalUrl = undefined;
         let requestBody = undefined;
-        compileAll("data/api", {
+        compileAll("data/api", "data/api/apiMetadata.json",{
             existsSync(path: string): boolean {
                 return fs.existsSync(path);
             }, readFileSync(file: string, encoding: string): string {
@@ -185,7 +185,7 @@ describe("evalApi tests", () => {
     it('should return correct results on http patch request', () => {
         let finalUrl = undefined;
         let requestBody = undefined;
-        compileAll("data/api", {
+        compileAll("data/api", "data/api/apiMetadata.json",{
             existsSync(path: string): boolean {
                 return fs.existsSync(path);
             }, readFileSync(file: string, encoding: string): string {
@@ -229,7 +229,7 @@ describe("evalApi tests", () => {
     it('should return correct results on local storage set-in', () => {
         let receivedKey = undefined;
         let receivedData = undefined;
-        compileAll("data/api", {
+        compileAll("data/api", "data/api/apiMetadata.json", {
             existsSync(path: string): boolean {
                 return fs.existsSync(path);
             }, readFileSync(file: string, encoding: string): string {
@@ -269,7 +269,7 @@ describe("evalApi tests", () => {
     it('should return correct results on local storage get-in', () => {
         let receivedKey = undefined;
         let receivedData = undefined;
-        compileAll("data/api", {
+        compileAll("data/api", "data/api/apiMetadata.json",{
             existsSync(path: string): boolean {
                 return fs.existsSync(path);
             }, readFileSync(file: string, encoding: string): string {

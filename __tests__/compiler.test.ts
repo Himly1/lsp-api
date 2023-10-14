@@ -150,7 +150,7 @@ describe("CompileAll Tests", () => {
 
     it('should throw exception when the data access layer not exists', () => {
         expect(() => {
-            compileAll("data/api", {
+            compileAll("data/api", "data/api/apiMetadata.json",{
                 existsSync(path: string): boolean {
                     return fs.existsSync(path);
                 }, readFileSync(file: string, encoding: string): string {
@@ -261,7 +261,7 @@ describe("getFacts tests", () => {
     });
 
     it('should return the correct facts', () => {
-        compileAll("data/api", {
+        compileAll("data/api", "data/api/apiMetadata.json",{
             existsSync(path: string): boolean {
                 return fs.existsSync(path);
             }, readFileSync(file: string, encoding: string): string {

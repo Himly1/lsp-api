@@ -259,7 +259,8 @@ export async function api<T extends keyof FlattedApis>(api: T, req: RequestTypeO
 const fs = require("fs")
 const lspApi = require('lsp-api')
 
-lspApi.compileAll(process.cwd() + "/data/api", {
+//The location of the apis, and where to store the api metadatas, and the wrapper for the fsf module.
+lspApi.compileAll(process.cwd() + "/data/api", "/data/api/apiMetadata.json" {
     statSync(path) {
         return fs.statSync(path);
     },

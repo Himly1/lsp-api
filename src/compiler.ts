@@ -215,7 +215,7 @@ function getTsFiles(dir: string, fileList: string[] = [], fs:Fs): string[] {
 
 const lspMetadata: { [key: string]: string[] } = {}
 
-export function compileAll(pathOfApiFolder: string, fs:Fs) {
+export function compileAll(pathOfApiFolder: string, pathForWriteMetadata: string, fs:Fs) {
     const exists = fs.existsSync(pathOfApiFolder);
     if (!exists) {
         throw `ERROR: The api folder not exists: ${pathOfApiFolder}`;
@@ -241,7 +241,7 @@ export function compileAll(pathOfApiFolder: string, fs:Fs) {
         }
     })
 
-    fs.writeFileSync(`${pathOfApiFolder}/apiMetadata.json`, JSON.stringify(lspMetadata), 'utf-8')
+    fs.writeFileSync(pathForWriteMetadata, JSON.stringify(lspMetadata), 'utf-8')
 }
 
 export function getFacts(lsp: string, metadata: { [key: string]: string[] }) {
